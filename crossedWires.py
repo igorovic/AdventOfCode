@@ -154,54 +154,51 @@ def calcLen(L, P, D):
     print("      >>>", SUM, "=", TOTAL)
     return TOTAL
 
+def reduce(D, len):
+    TOTAL = 0
+    for x in range(len-1):
+        TOTAL += int(D[x][1:])
+    return TOTAL
+
+def calcLine(POINTS, L1, D1):
+    TOTALS = []
+
+    for P in POINTS:
+        i = 0
+        for i in range(len(L1)):
+            points = L1[0:i]
+            if len(points)<2:
+                continue
+            L = LineString(points)
+            if L.intersection(Point(P)):
+                TOTALS.append(reduce(D1, i))
+                break
+    return TOTALS
 
 if __name__ == "__main__":
-
+    origin = (0,0)
     D1 = TEST1a
     D2 = TEST1b
 
-    L1 = draw(D1, (0, 0))
-    L2 = draw(D2, (0, 0))
+    L1 = draw(D1, origin)
+    L2 = draw(D2, origin)
 
     line1 = LineString(L1)
     line2 = LineString(L2)
-    plt.plot(*line1.xy, *line2.xy)
     int_pt = line1.intersection(line2)
     POINTS = [(p.x, p.y) for p in int_pt]
+    POINTS.pop(0) # pop the origin point
     DIST = Manhattan(POINTS)
 
-    for P in POINTS:
-        len1 = 0
-        len2 = 0
-        if P[0] == 0 and P[1] == 0:
-            continue
-        i = 0
-        for i in range(len(L1)):
-            L = L1[0:i]
-            if len(L) < 2:
-                continue
-            Line_1 = LineString(L)
-            INTER1 = Line_1.intersection(Point(P))
-            if(INTER1):
-                len1 = calcLen(L, P, D1)
-                break
-        i = 0
-        for i in range(len(L2)):
-            L = L2[0:i]
-            if len(L) < 2:
-                continue
-            Line = LineString(L)
-            INTER = Line.intersection(Point(P))
-            if(INTER):
-                len2 = calcLen(L, P, D2)
-                break
-        print()
-        print(P, ">", len1 + len2)
-        print()
+    
+    T1 = calcLine(POINTS, L1, D1)
+    T2 = calcLine(POINTS, L2, D2)
 
     print("===")
     print(POINTS)
     print(DIST)
     #print([x + y for x, y in zip(L1_LENGTH, L2_LENGTH)])
-
-    # plt.show()
+    print(T1)
+    print(T2)
+    #plt.plot(*line1.xy, *line2.xy)
+    plt.show()

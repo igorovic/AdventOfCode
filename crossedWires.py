@@ -1,4 +1,5 @@
 import numpy as np
+import copy
 import matplotlib.pyplot as plt
 import matplotlib.cm as cm
 import shapely
@@ -20,7 +21,8 @@ TEST1b = "U62,R66,U55,R34,D71,R55,D58,R83".split(",")
 TEST2a = "R98,U47,R26,D63,R33,U87,L62,D20,R33,U53,R51".split(",")
 TEST2b = "U98,R91,D20,R16,D67,R40,U7,R15,U6,R7".split(",")
 
-origin = (0,0)
+origin = (0, 0)
+
 
 def cross(currentValue, cursor):
     if currentValue == 0:
@@ -144,34 +146,43 @@ def intersectionPoints(D1, D2):
     line1 = LineString(L1)
     line2 = LineString(L2)
     int_pt = line1.intersection(line2)
-    POINTS = [(p.x, p.y) for p in int_pt] #intersection points
-    POINTS.pop(0) # pop the origin point
+    POINTS = [(p.x, p.y) for p in int_pt]  # intersection points
+    POINTS.pop(0)  # pop the origin point
     return POINTS
 
 
-def dynamicLine(D, P):
-    intersects = False
-    while not intersects:
-        L = LineString(genLine(D, origin))
-        if L.intersects(Point(P)):
-            intersects = True
-    return L
+def ShortestPathToInteresct(D, P):
+    POINTS = intersectionPoints(W1, W2)
+    P = POINTS[0]
+
+    def LEN(D, P):
+        D = copy.copy(D)
+        DATA = [D.pop(0)]
+        intersects = False
+        while not intersects:
+            DATA.append(D.pop(0))
+            L = LineString(DATA)
+            if L.intersects(Point(P)):
+                intersects = True
+        DATA[-1] = P
+        L = LineString(DATA)
+        return L.length
+
+    for P in POINTS:
+        LEN(D1, P) + LEN(D2, P)
 
 
 if __name__ == "__main__":
-    
+
     D1 = TEST0a
     D2 = TEST0b
 
     POINTS = intersectionPoints(D1, D2)
     DIST = Manhattan(POINTS)
 
-    
-
-
     print("===")
     print(POINTS)
-    #print(DIST)
-    
+    # print(DIST)
+
     #plt.plot(*line1.xy, *line2.xy)
-    #plt.show()
+    # plt.show()

@@ -141,7 +141,14 @@ def calcLen(L, P, D):
     for i in range(len(L)-1):
         SUM.append(int(D[i][1:]))
 
-    SUM.append(abs(sum(np.subtract(L[-1], P))))
+    #SUM.append(abs(sum(np.subtract(L[-1], P))))
+    X = abs(int(D[i+1][1:]) - P[0])
+    Y = abs(int(D[i+1][1:]) - P[1])
+    if D[0] == "R" or D[0] == "L":
+        SUM.append(X)
+    else:
+        SUM.append(Y)
+
     TOTAL = sum(SUM)
     print(L)
     print("      >>>", SUM, "=", TOTAL)
@@ -150,11 +157,14 @@ def calcLen(L, P, D):
 
 if __name__ == "__main__":
 
-    D1 = TEST2a
-    D2 = TEST2b
+    D1 = TEST1a
+    D2 = TEST1b
 
-    line1 = LineString(draw(D1, (0, 0)))
-    line2 = LineString(draw(D2, (0, 0)))
+    L1 = draw(D1, (0, 0))
+    L2 = draw(D2, (0, 0))
+
+    line1 = LineString(L1)
+    line2 = LineString(L2)
     plt.plot(*line1.xy, *line2.xy)
     int_pt = line1.intersection(line2)
     POINTS = [(p.x, p.y) for p in int_pt]
@@ -165,13 +175,21 @@ if __name__ == "__main__":
         len2 = 0
         if P[0] == 0 and P[1] == 0:
             continue
-        for L1 in genLine(D1, (0, 0)):
-            Line_1 = LineString(L1)
+        i = 0
+        for i in range(len(L1)):
+            L = L1[0:i]
+            if len(L) < 2:
+                continue
+            Line_1 = LineString(L)
             INTER1 = Line_1.intersection(Point(P))
             if(INTER1):
-                len1 = calcLen(L1, P, D1)
+                len1 = calcLen(L, P, D1)
                 break
-        for L in genLine(D2, (0, 0)):
+        i = 0
+        for i in range(len(L2)):
+            L = L2[0:i]
+            if len(L) < 2:
+                continue
             Line = LineString(L)
             INTER = Line.intersection(Point(P))
             if(INTER):

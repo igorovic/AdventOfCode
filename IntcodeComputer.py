@@ -56,7 +56,7 @@ def paramMode(paramAdr, mode, RAM):
         raise Exception("Unknown param mode")
     return val
 
-def OPERATION(idx, RAM):
+def OPERATION(idx, RAM, Uinput=None, ReturnDest=None):
     OP = RAM[idx]
     #print("( ", idx, " - ", OP, ")")
     NEXT = -1
@@ -114,11 +114,18 @@ def OPERATION(idx, RAM):
         RAM[destAdr] = A + B
         NEXT = 4
     if opcode == 3:
-        user_input = input("Enter a value: ")
+        user_input = None
+        if isinstance(Uinput, list):
+            user_input = int(Uinput.pop(0))
+        else:
+            user_input = input("Enter a value: ")
         RAM[destAdr] = int(user_input)
         NEXT = 2
     if opcode == 4:
-        print(A)
+        if isinstance(Uinput, list):
+            ReturnDest.append(A)
+        else:
+            print(A)
         NEXT = 2
     if opcode == 5:
         if A != 0:
@@ -145,11 +152,11 @@ def OPERATION(idx, RAM):
 
     return NEXT
 
-def execute(RAM):
+def execute(RAM, Uinput=None, ReturnDest=None):
     idx = 0
 
     while idx < len(RAM):
-        NEXT = OPERATION(idx, RAM)
+        NEXT = OPERATION(idx, RAM, Uinput, ReturnDest)
         if isinstance(NEXT, int):
             if NEXT < 0:
                 break
@@ -160,7 +167,7 @@ def execute(RAM):
 
 
 if __name__ == "__main__":
-    for n,v in phraseGenerator():
+    """ for n,v in phraseGenerator():
         RAM = copy.copy(MEMORY)
         RAM[1] = n
         RAM[2] = v
@@ -168,5 +175,6 @@ if __name__ == "__main__":
         if RAM[0] == 19690720:
             print("HAAAA ", RAM[0], n, v)
             print((100*n)+v)
-            break
+            break """
+    pass
         
